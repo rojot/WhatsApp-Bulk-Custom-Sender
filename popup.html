@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WA Bulk Custom Sender</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-badge">WA</div>
+      <div>
+        <h1>WA Bulk Custom Sender</h1>
+        <p class="subtitle">Excel &amp; CSV Placeholder Automation</p>
+      </div>
+    </div>
+    <button id="openSidePanelBtn" class="ghost-btn" title="Pin to Chrome Side Panel so it stays open while sending">
+      Pin Panel
+    </button>
+  </header>
+
+  <main class="container">
+    <!-- Step 1: Upload Excel or CSV -->
+    <section class="card">
+      <div class="step-header">
+        <span class="step-num">1</span>
+        <h2>Upload Contacts (.xlsx or .csv)</h2>
+      </div>
+      <label for="fileInput" class="dropzone" id="dropzone">
+        <input type="file" id="fileInput" accept=".csv,.tsv,.xlsx" hidden />
+        <div class="dropzone-title" id="fileLabel">Click or drop Excel (.xlsx) / CSV file</div>
+        <div class="dropzone-hint">Columns like <code>name</code>, <code>number</code>, or any custom column become placeholders</div>
+      </label>
+
+      <div id="fileSummary" class="file-summary hidden">
+        <div class="summary-bar">
+          <span id="contactCountBadge" class="badge-success">0 contacts loaded</span>
+          <button id="clearDataBtn" class="text-danger-btn" type="button">Clear</button>
+        </div>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label for="searchColSelect">Search Contact Using Column</label>
+            <select id="searchColSelect"></select>
+          </div>
+          <div class="field-group">
+            <label for="fallbackColSelect">Fallback Search Column</label>
+            <select id="fallbackColSelect"></select>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 2: Customize Message Template -->
+    <section class="card">
+      <div class="step-header">
+        <span class="step-num">2</span>
+        <h2>Customize SMS / WhatsApp Message</h2>
+      </div>
+
+      <div id="placeholderBar" class="placeholder-bar">
+        <span class="placeholder-hint">Upload a file to click &amp; insert column placeholders</span>
+      </div>
+
+      <textarea
+        id="messageTemplate"
+        rows="4"
+        placeholder="Hello {{name}}, here is an update for your number {{number}}..."
+      >Hello {{name}}, hope you are doing well!</textarea>
+
+      <div class="preview-box">
+        <div class="preview-label">Live Preview (1st Row):</div>
+        <div id="messagePreview" class="preview-content">Upload a file to preview customized message...</div>
+      </div>
+    </section>
+
+    <!-- Step 3: Search & Loop Settings -->
+    <section class="card">
+      <div class="step-header">
+        <span class="step-num">3</span>
+        <h2>Search &amp; Sending Loop Options</h2>
+      </div>
+
+      <div class="field-group">
+        <label for="searchModeSelect">Step 2 &amp; 3 Contact Navigation Mode</label>
+        <select id="searchModeSelect">
+          <option value="auto">Search Bar / New Chat + Direct Phone Fallback (Recommended)</option>
+          <option value="search_only">WhatsApp Search / New Chat Bar Only (Saved Contacts)</option>
+          <option value="direct_phone">Direct Phone Chat Link Only (Fastest for Phone Numbers)</option>
+        </select>
+      </div>
+
+      <div class="field-row">
+        <div class="field-group">
+          <label for="countryCodeInput">Default Country Code</label>
+          <input type="text" id="countryCodeInput" placeholder="e.g. 880" value="880" />
+        </div>
+        <div class="field-group">
+          <label for="minDelayInput">Delay Min / Max (sec)</label>
+          <div class="delay-pair">
+            <input type="number" id="minDelayInput" min="2" max="120" value="4" />
+            <span>-</span>
+            <input type="number" id="maxDelayInput" min="2" max="180" value="7" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Action Controls -->
+    <section class="controls-bar">
+      <button id="startBtn" class="btn btn-primary" disabled>Start Bulk Sending</button>
+      <button id="pauseBtn" class="btn btn-warning hidden">Pause</button>
+      <button id="resumeBtn" class="btn btn-primary hidden">Resume</button>
+      <button id="stopBtn" class="btn btn-danger hidden">Stop</button>
+    </section>
+
+    <!-- Progress & Live Log -->
+    <section class="card status-card">
+      <div class="status-top">
+        <span id="statusLabel" class="status-text">Ready — Open web.whatsapp.com to begin</span>
+        <span id="progressCounter" class="progress-counter">0 / 0</span>
+      </div>
+      <div class="progress-track">
+        <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+      </div>
+      <div class="stats-row">
+        <span class="stat-pill sent">Sent: <strong id="sentCount">0</strong></span>
+        <span class="stat-pill failed">Failed: <strong id="failedCount">0</strong></span>
+        <button id="exportLogBtn" class="link-btn hidden" type="button">Download Report CSV</button>
+      </div>
+      <div id="logContainer" class="log-container"></div>
+    </section>
+  </main>
+
+  <script src="xlsx_csv_parser.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
